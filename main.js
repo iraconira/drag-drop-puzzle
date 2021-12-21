@@ -17,7 +17,7 @@ const getSquareDimensions = (imgDimensions, columns) => {
   const ratio = imgDimensions.width / imgDimensions.height
   const rows = columns / ratio
   const width = imgDimensions.width / columns
-  const height = imgDimensions.height / rows
+  const height = width
   const roundedRows = Math.floor(rows)
   const pieces = columns * roundedRows
 
@@ -39,113 +39,88 @@ img.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e163533
 img.onload = () => {
   { imgDimensions.width = img.width, imgDimensions.height = img.height }
   const squareDimensions = getSquareDimensions(imgDimensions, COLUMNS)
-  const sizeRatio = squareDimensions.width / 100
   console.log('imgDimensions; ', imgDimensions)
   console.log('squareDimensions: ', squareDimensions)
+
+  const container = document.createElement('div')
+  container.classList.add('container')
+  container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.height}px; border: 1px solid red`)
+
+  document.querySelector('body').appendChild(container)
   
-  createPuzzle(sizeRatio, imgDimensions, squareDimensions)
+  createPuzzle(imgDimensions, squareDimensions)
 }
 
-const createPuzzle = (sizeRatio, imgDimensions, squareDimensions) => {
-  console.log('sizeRatio: ', sizeRatio)
-  let index = 0
-  
-  let piece = 'L0T1R0B1',
-    row = 1,
-    bgX = 0,
-    bgY = 0,
-    rotation = 0
+const createPuzzle = (imgDimensions, squareDimensions) => {
+  let bgX = 0, bgY = 0
 
-  for (let i = 1; i <= squareDimensions.pieces; i++) {
+  for(let y = 0; y < squareDimensions.rows; y++) {
     
-    console.log('loop: ', i)
-    
-    // first row
-    if (i <= COLUMNS) {
-      bgX = - ((i-1) * squareDimensions.width)
-      console.log('bgX: ', bgX)
-      console.log('first row: ', i)
+    for (let x = 0; x < squareDimensions.columns; x++) {
       
-      // inner pieces are L1R1B0 or L0R0B1 by default
-      if (i % 2 === 0) {
-        piece = 'L1R1B0'
-      } else {
-        piece = 'L0R0B1'
-      }
-      
-      // first piece
-      if (i === 1) {
-        piece = 'R0B1'
-      }
-
-      // last piece
-      if (i === COLUMNS) {
-        piece = 'R0B1'
-        rotation = 90
-      }
-
-      const shape = shapes[piece]
-      const svg = new createSVG({
-          id: `${piece}-${i}`,
-          sizeRatio,
-          width: shape.width,
-          height: shape.height,
-          d: shape.d,
-          stroke: 'black',
-          rotation,
-          background: {
-            href: img.src,
-            width: imgDimensions.width,
-            height: imgDimensions.height,
-            x: bgX,
-            y: bgY,
-          },
-        }).getSVG
+        bgX = -(x * squareDimensions.width)
+        bgY = -(y * squareDimensions.height)
         
-        const R0B190 = svg.cloneNode()
-        R0B190.setAtt 
-      
-        document.querySelector('body').appendChild(svg)
+        const svg = new createSVG({
+            id: `p-x${x}y${y}`,
+            width: squareDimensions.width,
+            height: squareDimensions.height,
+            stroke: 'black',
+            background: {
+              href: img.src,
+              width: imgDimensions.width,
+              height: imgDimensions.height,
+              x: bgX,
+              y: bgY,
+            },
+          }).getSVG
+
+          
+          document.querySelector('.container').appendChild(svg)
+          dragElement(svg);
     }
-    
+  }
+}
 
 
-    // // end of row
-    // if (i % COLUMNS === 0) {
-    //   console.log('end of row: ', i)
-    // }
-    
-    // // last piece
-    // if (i === squareDimensions.pieces) {
-    //   console.log('last piece: ', i)
-    // }
+function dragElement(elmnt) {
+  console.log(elmnt)
+  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  // if (document.getElementById(elmnt.id)) {
+  //   /* if present, the header is where you move the DIV from:*/
+  //   document.getElementById(elmnt.id).onmousedown = dragMouseDown;
+  // } else {
+  //   /* otherwise, move the DIV from anywhere inside the DIV:*/
+  // }
+  elmnt.onmousedown = dragMouseDown;
+  
+  function dragMouseDown(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // get the mouse cursor position at startup:
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    // call a function whenever the cursor moves:
+    document.onmousemove = elementDrag;
+  }
+  
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+    // calculate the new cursor position:
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    // set the element's new position:
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
   }
 
-  // for (const item in shapes) {
-  //   const shape = shapes[item]
-  //   // console.log(shape)
-  //   // console.log(index)
-    
-  //   const svg = new createSVG({
-  //       id: `${item}-${index}`,
-  //       sizeRatio,
-  //       width: shape.width,
-  //       height: shape.height,
-  //       d: shape.d,
-  //       stroke: 'black',
-  //       background: {
-  //         href: img.src,
-  //         width: imgDimensions.width,
-  //         height: imgDimensions.height,
-  //         x: 0,
-  //         y: 0,
-  //       },
-  //     }).getSVG
-      
-  //     const R0B190 = svg.cloneNode()
-  //     R0B190.setAtt 
-    
-  //     document.querySelector('body').appendChild(svg)
-  //     index++
-  // } 
+  function closeDragElement() {
+    /* stop moving when mouse button is released:*/
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
 }
