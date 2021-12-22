@@ -1,23 +1,12 @@
-// import anime from './node_modules/animejs/lib/anime.es.js'
-// anime({
-//   targets: '#testsvg path',
-//   strokeDashoffset: [anime.setDashoffset, 0],
-//   easing: 'easeInOutQuad',
-//   duration: 5000,
-//   direction: 'alternate',
-//   loop: true
-// })
+import Square from './Square.js'
+import Drag from './Drag.js'
 
-import createSVG from './createSVG.js'
-import shapes from './shapes.js'
+const COLUMNS = 2
 
-const COLUMNS = 6
-
-const getSquareDimensions = (imgDimensions, columns) => {
-  const ratio = imgDimensions.width / imgDimensions.height
+const getSquareDimensions = (bg, columns) => {
+  const ratio = bg.width / bg.height
   const rows = columns / ratio
-  const width = imgDimensions.width / columns
-  const height = width
+  const width = bg.width / columns
   const roundedRows = Math.floor(rows)
   const pieces = columns * roundedRows
 
@@ -27,100 +16,54 @@ const getSquareDimensions = (imgDimensions, columns) => {
     rows, 
     roundedRows, 
     pieces, 
-    width, 
-    height 
+    width 
   }
 }
 
 // get image dimensions
-const imgDimensions = {}
-const img = new Image()
-img.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
-img.onload = () => {
-  { imgDimensions.width = img.width, imgDimensions.height = img.height }
-  const squareDimensions = getSquareDimensions(imgDimensions, COLUMNS)
-  console.log('imgDimensions; ', imgDimensions)
+const background = new Image()
+// background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
+background.src = 'https://c8.alamy.com/compes/2e49eye/vaffanculo-vintage-clasico-american-poster-rosie-el-remachador-flexiona-su-biceps-y-declara-podemos-hacerlo-sufidos-como-un-gesto-italiano-2e49eye.jpg'
+background.onload = () => {
+  const squareDimensions = getSquareDimensions(background, COLUMNS)
+  console.log('imgDimensions; ', background)
   console.log('squareDimensions: ', squareDimensions)
 
   const container = document.createElement('div')
   container.classList.add('container')
-  container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.height}px; border: 1px solid red`)
+  container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.width}px; border: 1px solid blue`)
 
   document.querySelector('body').appendChild(container)
   
-  createPuzzle(imgDimensions, squareDimensions)
+  createPuzzle(background, squareDimensions)
 }
 
-const createPuzzle = (imgDimensions, squareDimensions) => {
+const createPuzzle = (background, squareDimensions) => {
   let bgX = 0, bgY = 0
 
-  for(let y = 0; y < squareDimensions.rows; y++) {
+  for (let y = 0; y < squareDimensions.rows; y++) {
     
     for (let x = 0; x < squareDimensions.columns; x++) {
       
-        bgX = -(x * squareDimensions.width)
-        bgY = -(y * squareDimensions.height)
-        
-        const svg = new createSVG({
-            id: `p-x${x}y${y}`,
-            width: squareDimensions.width,
-            height: squareDimensions.height,
-            stroke: 'black',
-            background: {
-              href: img.src,
-              width: imgDimensions.width,
-              height: imgDimensions.height,
-              x: bgX,
-              y: bgY,
-            },
-          }).getSVG
-
-          
-          document.querySelector('.container').appendChild(svg)
-          dragElement(svg);
+      bgX = -(x * squareDimensions.width)
+      bgY = -(y * squareDimensions.width)
+      
+      const piece = new Square({
+        id: `p-x${x}y${y}`,
+        width: squareDimensions.width,
+        bgImage: {
+          src: background.src,
+          x: bgX,
+          y: bgY,
+        },
+        position: {
+          left: -bgX,
+          top: -bgY
+        }
+      }).render
+      
+      document.querySelector('.container').appendChild(piece)
+      new Drag(piece, document).init()
     }
-  }
-}
-
-
-function dragElement(elmnt) {
-  console.log(elmnt)
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  // if (document.getElementById(elmnt.id)) {
-  //   /* if present, the header is where you move the DIV from:*/
-  //   document.getElementById(elmnt.id).onmousedown = dragMouseDown;
-  // } else {
-  //   /* otherwise, move the DIV from anywhere inside the DIV:*/
-  // }
-  elmnt.onmousedown = dragMouseDown;
-  
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-  
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault();
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() {
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;
   }
 }
