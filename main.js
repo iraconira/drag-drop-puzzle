@@ -1,7 +1,7 @@
 import Square from './Square.js'
 import Drag from './Drag.js'
 
-const COLUMNS = 2
+const COLUMNS = 5
 
 const getSquareDimensions = (bg, columns) => {
   const ratio = bg.width / bg.height
@@ -26,8 +26,7 @@ const background = new Image()
 background.src = 'https://c8.alamy.com/compes/2e49eye/vaffanculo-vintage-clasico-american-poster-rosie-el-remachador-flexiona-su-biceps-y-declara-podemos-hacerlo-sufidos-como-un-gesto-italiano-2e49eye.jpg'
 background.onload = () => {
   const squareDimensions = getSquareDimensions(background, COLUMNS)
-  console.log('imgDimensions; ', background)
-  console.log('squareDimensions: ', squareDimensions)
+  // console.log('squareDimensions: ', squareDimensions)
 
   const container = document.createElement('div')
   container.classList.add('container')
@@ -39,17 +38,16 @@ background.onload = () => {
 }
 
 const createPuzzle = (background, squareDimensions) => {
-  let bgX = 0, bgY = 0
+  let bgX = 0, bgY = 0, index = 0
 
   for (let y = 0; y < squareDimensions.rows; y++) {
-    
     for (let x = 0; x < squareDimensions.columns; x++) {
-      
       bgX = -(x * squareDimensions.width)
       bgY = -(y * squareDimensions.width)
+      index ++
       
       const piece = new Square({
-        id: `p-x${x}y${y}`,
+        id: `p${index}-x${x}y${y}`,
         width: squareDimensions.width,
         bgImage: {
           src: background.src,
@@ -62,8 +60,10 @@ const createPuzzle = (background, squareDimensions) => {
         }
       }).render
       
-      document.querySelector('.container').appendChild(piece)
-      new Drag(piece, document).init()
+      const wrapper = document.querySelector('.container')
+      wrapper.appendChild(piece)
+      
+      new Drag(piece, wrapper).init()
     }
   }
 }
