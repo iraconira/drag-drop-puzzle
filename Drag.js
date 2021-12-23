@@ -35,11 +35,12 @@ export default class Drag {
         this.draggable.style.left,
         this.draggable.style.top 
       ]
+
     }, true)
   }
   
   addMouseUpListener() {
-    this.wrapper.addEventListener('mouseup', (_e) => {
+    document.addEventListener('mouseup', (_e) => {
       _e.preventDefault()
       _e.stopPropagation()
       
@@ -48,17 +49,13 @@ export default class Drag {
       if (this.isDown) {
         this.isDown = false
         this.dropInExactPlace()
-
-        // console.log([_e.clientX, _e.clientY])
-        // this.draggable.style.left = `${this.initialOffset[0]}px`
-        // this.draggable.style.top  = `${this.initialOffset[1]}px`
       }
       
     }, true)
   }
   
   addMouseMoveListener() {
-    this.wrapper.addEventListener('mousemove', (_e) => {
+    document.addEventListener('mousemove', (_e) => {
       _e.preventDefault()
       _e.stopPropagation()
       
@@ -67,15 +64,23 @@ export default class Drag {
         this.draggable.style.top  = `${(_e.clientY + this.offset[1])}px`
         
         this.changeOpacity()
-        // console.log(this.offset)
       }
-      
     }, true)
   }
 
   isOverlapping(item) {
-    return item.offsetLeft < this.draggable.offsetLeft && this.draggable.offsetLeft < item.offsetLeft + item.offsetWidth 
-      && item.offsetTop < this.draggable.offsetTop && this.draggable.offsetTop < item.offsetTop + item.offsetHeight
+      const fixed = item.getBoundingClientRect()
+      const moved = this.draggable.getBoundingClientRect()
+
+      return (fixed.x > moved.x && moved.x+moved.width > fixed.x + fixed.width/2) &&
+        (fixed.y+fixed.width/2 > moved.y && moved.y+moved.height > fixed.y + fixed.height/2)
+        ||
+        (fixed.x < moved.x && fixed.x + fixed.width/2 > moved.x) &&
+        (fixed.y < moved.y && fixed.y + fixed.width/2 > moved.y)
+        ||
+        (fixed.y+fixed.width/2 > moved.y && moved.y+moved.height > fixed.y + fixed.height/2) &&
+        (fixed.x < moved.x && fixed.x+fixed.width/2 > moved.x)
+      
   }
 
   changeOpacity() {
@@ -87,14 +92,21 @@ export default class Drag {
   }
 
   dropInExactPlace() {
+    let initialState = false
+
     this.wrapper.childNodes.forEach((item) => {
       if (this.isOverlapping(item)) {
         this.draggable.style.left = item.style.left
-        this.draggable.style.top  = item.style.top 
+        this.draggable.style.top = item.style.top 
         item.style.left = this.initialPosition[0]
         item.style.top = this.initialPosition[1]
-      }
-  })
-  }
 
+        initialState = true
+      } 
+  })
+    if (!initialState){
+      this.draggable.style.left = this.initialPosition[0]
+      this.draggable.style.top = this.initialPosition[1]
+    }
+  }
 }

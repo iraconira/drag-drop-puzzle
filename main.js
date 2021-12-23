@@ -1,12 +1,13 @@
 import Square from './Square.js'
 import Drag from './Drag.js'
+import Rotate from './Rotate.js'
 
-const COLUMNS = 5
+const COLUMNS = 8
 
 const getSquareDimensions = (bg, columns) => {
   const ratio = bg.width / bg.height
   const rows = columns / ratio
-  const width = bg.width / columns
+  const width = Math.floor(bg.width / columns)
   const roundedRows = Math.floor(rows)
   const pieces = columns * roundedRows
 
@@ -20,20 +21,19 @@ const getSquareDimensions = (bg, columns) => {
   }
 }
 
+const container = document.createElement('div')
+container.classList.add('container')
+document.querySelector('body').appendChild(container)
+
+
 // get image dimensions
 const background = new Image()
-// background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
-background.src = 'https://c8.alamy.com/compes/2e49eye/vaffanculo-vintage-clasico-american-poster-rosie-el-remachador-flexiona-su-biceps-y-declara-podemos-hacerlo-sufidos-como-un-gesto-italiano-2e49eye.jpg'
+background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
+// background.src = 'https://c8.alamy.com/compes/2e49eye/vaffanculo-vintage-clasico-american-poster-rosie-el-remachador-flexiona-su-biceps-y-declara-podemos-hacerlo-sufidos-como-un-gesto-italiano-2e49eye.jpg'
 background.onload = () => {
   const squareDimensions = getSquareDimensions(background, COLUMNS)
-  // console.log('squareDimensions: ', squareDimensions)
-
-  const container = document.createElement('div')
-  container.classList.add('container')
   container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.width}px; border: 1px solid blue`)
-
-  document.querySelector('body').appendChild(container)
-  
+  console.log('squareDimensions: ', squareDimensions)
   createPuzzle(background, squareDimensions)
 }
 
@@ -60,10 +60,12 @@ const createPuzzle = (background, squareDimensions) => {
         }
       }).render
       
-      const wrapper = document.querySelector('.container')
-      wrapper.appendChild(piece)
-      
-      new Drag(piece, wrapper).init()
+      container.appendChild(piece)
+
+      new Drag(piece, container).init()
+
+      new Rotate(piece).init()
     }
   }
 }
+

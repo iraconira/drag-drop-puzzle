@@ -20,8 +20,9 @@ export default class Square {
       background-image: url('${this.bgImage.src}');
       background-position: ${this.bgImage.x}px ${this.bgImage.y}px;
       background-repeat: no-repeat;
-      border: 1px solid red;
+      border: 1px solid #80808045;
       position: absolute;
+      box-sizing: border-box;
       top: ${this.position.top}px;
       left: ${this.position.left}px;
       z-index: ${index};
