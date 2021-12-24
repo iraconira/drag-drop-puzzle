@@ -28,8 +28,7 @@ document.querySelector('body').appendChild(container)
 
 // get image dimensions
 const background = new Image()
-// background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
-background.src = 'https://www.emprendedores.es/wp-content/uploads/2020/11/DropHousing-1024x576.jpg'
+background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
 background.onload = () => {
   const squareDimensions = getSquareDimensions(background, COLUMNS)
   container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.width}px; border: 1px solid blue`)
