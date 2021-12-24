@@ -4,7 +4,5 @@
   "main": "main.js",
   "author": "IMT",
   "license": "MIT",
-  "dependencies": {
-    "animejs": "^3.2.1"
-  }
+  "dependencies": {}
 }
