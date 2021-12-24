@@ -23,8 +23,9 @@ export default class Drag {
       _e.preventDefault()
       _e.stopPropagation()
 
-      this.updateZindex(100)
-      
+      const piecesCount = this.wrapper.childNodes.length
+      this.updateZindex(piecesCount)
+
       this.isDown = true
       this.offset = [
         this.draggable.offsetLeft - _e.clientX,
@@ -100,6 +101,7 @@ export default class Drag {
         this.draggable.style.top = item.style.top 
         item.style.left = this.initialPosition[0]
         item.style.top = this.initialPosition[1]
+        item.style.opacity = 1
 
         initialState = true
       } 

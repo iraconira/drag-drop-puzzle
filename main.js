@@ -2,7 +2,7 @@ import Square from './Square.js'
 import Drag from './Drag.js'
 import Rotate from './Rotate.js'
 
-const COLUMNS = 8
+const COLUMNS = 2
 
 const getSquareDimensions = (bg, columns) => {
   const ratio = bg.width / bg.height
@@ -28,12 +28,11 @@ document.querySelector('body').appendChild(container)
 
 // get image dimensions
 const background = new Image()
-background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
-// background.src = 'https://c8.alamy.com/compes/2e49eye/vaffanculo-vintage-clasico-american-poster-rosie-el-remachador-flexiona-su-biceps-y-declara-podemos-hacerlo-sufidos-como-un-gesto-italiano-2e49eye.jpg'
+// background.src = 'https://deadline.com/wp-content/uploads/2021/10/The-Lion-King-e1635332653876.jpeg'
+background.src = 'https://www.emprendedores.es/wp-content/uploads/2020/11/DropHousing-1024x576.jpg'
 background.onload = () => {
   const squareDimensions = getSquareDimensions(background, COLUMNS)
   container.setAttribute('style', `position:absolute; width:${squareDimensions.columns*squareDimensions.width}px; height:${squareDimensions.roundedRows*squareDimensions.width}px; border: 1px solid blue`)
-  console.log('squareDimensions: ', squareDimensions)
   createPuzzle(background, squareDimensions)
 }
 

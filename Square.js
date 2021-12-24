@@ -10,7 +10,7 @@ export default class Square {
     const div = document.createElement('div')
     const index = this.id.split('-')[0].match(/\d+/i)
     
-    // div.innerHTML = `<pre style="font-size:30px; background-color:white;">x:${this.position.left}, y:${this.position.top}</pre>`
+    // div.innerHTML = `<pre style="font-size:16px; background-color:white;">x:${this.position.left}, y:${this.position.top}</pre>`
     
     div.setAttribute('id', this.id)
     div.setAttribute('data-width', this.width)
