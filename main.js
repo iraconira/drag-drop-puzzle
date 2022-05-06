@@ -2,7 +2,7 @@ import Square from './Square.js'
 import Drag from './Drag.js'
 import Rotate from './Rotate.js'
 
-const COLUMNS = 2
+const COLUMNS = 20
 
 const getSquareDimensions = (bg, columns) => {
   const ratio = bg.width / bg.height
@@ -11,13 +11,13 @@ const getSquareDimensions = (bg, columns) => {
   const roundedRows = Math.floor(rows)
   const pieces = columns * roundedRows
 
-  return { 
-    ratio, 
-    columns, 
-    rows, 
-    roundedRows, 
-    pieces, 
-    width 
+  return {
+    ratio,
+    columns,
+    rows,
+    roundedRows,
+    pieces,
+    width
   }
 }
 
@@ -43,7 +43,7 @@ const createPuzzle = (background, squareDimensions) => {
       bgX = -(x * squareDimensions.width)
       bgY = -(y * squareDimensions.width)
       index ++
-      
+
       const piece = new Square({
         id: `p${index}-x${x}y${y}`,
         width: squareDimensions.width,
@@ -57,7 +57,7 @@ const createPuzzle = (background, squareDimensions) => {
           top: -bgY
         }
       }).render
-      
+
       container.appendChild(piece)
 
       new Drag(piece, container).init()
